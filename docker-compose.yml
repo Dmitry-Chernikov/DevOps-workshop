@@ -1,0 +1,30 @@
+version: '3.10'
+
+services:
+    flask_web:
+        # Имя для создаваемого контейнера
+        container_name: flask_web_container
+        # Путь до Dockerfile
+        build: ./python-docker
+        # Создание переменных окружения в контейнере
+        environment:
+            # для отладки (при запуске в релиз убрать!)
+            - FLASK_ENV=development
+            ## Позволяет отслеживать процесс работы приложения в командной строке
+            - PYTHONUNBUFFERED=True                   
+            ##
+            - PYTHONDONTWRITEBYTECODE=True
+        # Перезапускаем сервис в случае падения 
+        restart: on-failure
+        # Открываем порт в контейнер
+        # Порт, который будет смотреть наружу : порт который используется 
+        # внутри контейнера
+        ports:
+            - 8000:5000
+        # Прокладывам путь для файлов. Все файлы, которые хранятся у вас в 
+        # директории ./backend, появятся в директории контейнера /backend
+        volumes:
+            - ./python-docker:/python-docker
+
+        command: python3 app.py
+
